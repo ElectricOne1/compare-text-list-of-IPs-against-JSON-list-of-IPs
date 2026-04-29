@@ -1,4 +1,3 @@
-PYTHON3 code
 Step 1)Inside the code, using Leafpad or Gedit , or your favorite, replace the text and Json with the full file paths and exactly what you named them, inside quotes. 
 Step 2) Save file , name it , using .py at the end.
 Step 3) in linux , remember to go to properties > permissions> check allow executing as a program. 
