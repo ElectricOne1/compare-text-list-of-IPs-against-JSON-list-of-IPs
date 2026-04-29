@@ -1,0 +1,88 @@
+import json
+
+import ipaddress
+
+
+def filter_a_assets(my_ips_file, a_json_file):
+
+    print("Loading infrastructure map...")
+#######I named my IP list 2000IPS , but you can name these two files whatever you want put your JSON HERE too 
+    with open('/home/ServiceTags.json', 'r') as f:
+
+        data = json.load(f)
+
+     # Pre-calculate the networks to make the check lightning fast
+
+    a_networks = []
+
+    for entry in data['values']:
+
+        prefixes = entry['properties'].get('addressPrefixes', [])
+
+        for p in prefixes:
+
+            a_networks.append(ipaddress.ip_network(p))
+  
+    
+
+    print(f"Loaded {len(a_networks)}  network ranges.")
+
+
+    # Load your scanned IPs
+################### put your IPs file name here too
+    with open('/home/2000IPS.txt', 'r') as f:
+##########################
+        my_ips = [line.strip() for line in f if line.strip()]
+
+
+    confirmed = []
+
+    print(f"Checking {len(my_ips)} IPs against ranges...")
+
+    
+
+    for i, ip in enumerate(my_ips):
+
+        try:
+
+            addr = ipaddress.ip_address(ip)
+
+            for net in a_networks:
+
+                if addr in net:
+
+                    confirmed.append(ip)
+
+                    break
+
+            # Show progress every 100 IPs
+
+            if (i + 1) % 100 == 0:
+
+                print(f"Processed {i + 1}/{len(my_ips)}...")
+
+        except ValueError:
+
+            continue
+
+
+    print(f"\n--- DONE! ---")
+
+    print(f"Found {len(confirmed)} confirmed assets.")
+
+    
+
+    
+
+##### you can name this output file what you want here, Good luck!
+    with open('/home/verified_hits.txt', 'w') as f:
+
+        for ip in confirmed:
+
+            f.write(f"{ip}\n")
+
+    print("Saved results to verified_hits.txt")
+
+##### YOURE ip list , FILE NAME GOES HERE where it says '/home/Ips etc...your JSON file name goes here'
+filter_a_assets('/home/2000IPS.txt', '/home/ServiceTags.json')
+
